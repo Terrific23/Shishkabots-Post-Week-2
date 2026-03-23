@@ -16,8 +16,9 @@ public class IntakePivotSubsystem extends SubsystemBase {
     private static final int PIVOT_CAN_ID = 14;
 
     // Time-based calibration values (seconds).
-    private static final double PIVOT_DOWN_DURATION_SEC = 1.5;
-    private static final double PIVOT_UP_DURATION_SEC = 2.0;
+    private static final double PIVOT_DOWN_DURATION_SEC = 0.5;
+    private static final double PIVOT_DOWN_DURATION_SEC_AFTER_FIRST = 0.25;
+    private static final double PIVOT_UP_DURATION_SEC = 0.5;
     private static final double PIVOT_POWER_DOWN = 0.30;
     private static final double PIVOT_POWER_UP = -0.20;
     private static final int PIVOT_CURRENT_LIMIT = 40;
@@ -54,7 +55,10 @@ public class IntakePivotSubsystem extends SubsystemBase {
 
     public void togglePosition() {
         movingDown = nextToggleGoesDown;
-        moveDurationSec = movingDown ? PIVOT_DOWN_DURATION_SEC : PIVOT_UP_DURATION_SEC;
+        boolean hasClickedBefore = toggleCount > 0;
+        moveDurationSec = movingDown
+            ? (hasClickedBefore ? PIVOT_DOWN_DURATION_SEC_AFTER_FIRST : PIVOT_DOWN_DURATION_SEC)
+            : PIVOT_UP_DURATION_SEC;
         moveStartTimeSec = Timer.getFPGATimestamp();
         nextToggleGoesDown = !nextToggleGoesDown;
         enabled = true;
